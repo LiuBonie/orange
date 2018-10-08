@@ -1,0 +1,379 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="renderer" content="webkit|ie-comp|ie-stand"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" /> 
+        <link th:href="@{/assets/css/bootstrap.min.css}" rel="stylesheet" />
+        <link rel="stylesheet" th:href="@{/css/style.css}"/>
+        <link rel="stylesheet" th:href="@{/assets/css/ace.min.css}" />
+        <link rel="stylesheet" th:href="@{/assets/css/font-awesome.min.css}" />
+        <link rel="stylesheet" th:href="@{/Widget/zTree/css/zTreeStyle/zTreeStyle.css}" type="text/css"/>
+        <link th:href="@{/Widget/icheck/icheck.css}" rel="stylesheet" type="text/css" />
+		<!--[if IE 7]>
+		  <link rel="stylesheet" th:href="@{/assets/css/font-awesome-ie7.min.css}" />
+		<![endif]-->
+        <!--[if lte IE 8]>
+		  <link rel="stylesheet" th:href="@{/assets/css/ace-ie.min.css}" />
+		<![endif]-->
+	    <script th:src="@{/js/jquery-1.9.1.min.js}"></script>
+        <script th:src="@{/assets/js/bootstrap.min.js}"></script>
+        <script th:src="@{/assets/js/typeahead-bs2.min.js}"></script>
+		<!-- page specific plugin scripts -->
+		<script th:src="@{/assets/js/jquery.dataTables.min.js}"></script>
+		<script th:src="@{/assets/js/jquery.dataTables.bootstrap.js}"></script>
+        <script type="text/javascript" th:src="@{/js/H-ui.js}"></script>
+        <script type="text/javascript" th:src="@{/js/H-ui.admin.js}"></script>
+        <script th:src="@{/assets/layer/layer.js}" type="text/javascript" ></script>
+        <script th:src="@{/assets/laydate/laydate.js}" type="text/javascript"></script>
+        <script type="text/javascript" th:src="@{/Widget/zTree/js/jquery.ztree.all-3.5.min.js}"></script>
+        <script th:src="@{/js/lrtk.js}" type="text/javascript" ></script>
+<title>商品列表</title>
+
+</head>
+<body>
+<div class=" page-content clearfix">
+ <div id="products_style">
+    <div class="search_style">
+
+      <ul class="search_content clearfix">
+       <!--<li><label class="l_f">商品名称</label><input name="" type="text" class="text_add" placeholder="输入品牌1名称" style=" width:250px"/></li>-->
+       <li><label class="l_f" id="start"/></li>
+       <!--<li style="width:90px;"><button type="button" class="btn_search" onclick="getTime()"><i class="icon-search"></i>查询</button></li>-->
+      </ul>
+    </div>
+     <div class="border clearfix">
+       <span class="l_f">
+        <a th:href="@{/user/productAdd}" title="添加商品" class="btn btn-warning Order_form"><i class="icon-plus"></i>添加商品</a>
+        <a href="javascript:;" class="btn btn-danger" onClick="deleteGoods()"><i class="icon-trash"></i>批量删除</a>
+           <script type="text/javascript">
+               function deleteGoods() {
+
+                   var checkedList = new Array();
+                   $("input[name='check']:checked").each(function() {
+                       checkedList.push($(this).val());
+                   });
+                   $.ajax({
+                       type: "post",
+                       url: "/user/deleteGoods",
+                       data: "checkedList="+checkedList,
+                       // dataType: 'text',
+                       // contentType: 'application/json;charset=UTF-8',
+                       success: function (r) {
+
+                           window.location.reload();
+                       }
+                   })
+               }
+
+           </script>
+       </span>
+       <span class="r_f">共：<b>2334dd</b>件商品</span>
+     </div>
+     <!--商品列表展示-->
+     <div class="h_products_list clearfix" id="products_list">
+       <div id="scrollsidebar" class="left_Treeview">
+        <div class="show_btn" id="rightArrow"><span></span></div>
+        <div class="widget-box side_content" >
+         <div class="side_title"><a title="隐藏" class="close_btn"><span></span></a></div>
+         <div class="side_list"><div class="widget-header header-color-green2"><h4 class="lighter smaller">商品类型列表</h4></div>
+         <div class="widget-body">
+          <div class="widget-main padding-8"><div id="treeDemo" class="ztree"></div></div>
+        </div>
+       </div>
+      </div>  
+     </div>
+         <div class="table_menu_list" id="testIframe">
+       <table class="table table-striped table-bordered table-hover" id="sample-table">
+		<thead>
+		 <tr>
+				<th width="25px"><label><input type="checkbox" class="ace"/><span class="lbl"></span></label></th>
+				<th width="80px">商品编号</th>
+				<th width="100px">商品名称</th>
+				<th width="100px">商品类别</th>
+				<th width="100px" height="50px">图片</th>
+                <th width="250px">商品详情</th>
+             <th width="120px">最后更新日期</th>
+             <th width="150px">库存</th>
+				<th width="80px">价格</th> 
+                <th width="110px">状态</th>          
+				<th width="200px">操作</th>
+			</tr>
+		</thead>
+           <!--<div th:each="category:${allCategory}">-->
+	<tbody>
+     <tr th:each="goods:${goodsList}">
+        <td width="25px"><label><input type="checkbox" class="ace" name="check" th:value="${goods.id}"/><span class="lbl"/></label></td>
+        <td width="80px" th:text="${goods.id}" class="goodsId">45631</td>
+        <td width="100px" th:text="${goods.name}"><u  style="cursor:pointer"  class="text-primary" onclick="">小米 Max</u></td>
+        <td width="100px" th:class="${goods.categoryId}">水果</td>
+        <script type="text/javascript" th:inline="javascript">
+            var allCategory=[[${allCategory}]];
+            var categoryId = [[${goods.categoryId}]];
+            //<![CDATA[
+            for(var i = 0;i<allCategory.length;i++){
+                if(categoryId==allCategory[i].id){
+                    $("."+categoryId).html(allCategory[i].name);
+                }
+
+            }
+            //]]>
+        </script>
+        <td width="100px"><img th:src="${goods.imageUrl}" alt="无图片" style="width: 50px;height: 50px" /></td>
+        <td width="250px" th:text="${goods.detail}">全网通 高配版 3GB内存 64GB ROM 金色 移动联通电信4G手机Y</td>
+         <td width="120px"><p th:if="${goods.updateTime!=null}" th:text="${#dates.format(goods.updateTime,'yyyy-MM-dd')}"></p></td>
+        <td width="150px"  th:text="${goods.stock}">222</td>
+        <td width="80px" th:text="${goods.price}">5467</td>
+        <td class="td-status" th:switch="${goods.status}">
+            <span  th:case="2"   class='label label-defaunt radius'>下架</span>
+            <span  th:case="1"   class='label label-success radius'>在售</span>
+        </td>
+        <td class="td-manage" th:switch="${goods.status}">
+            <a th:case="2" style="text-decoration:none" class="btn btn-xs " onClick="member_start(this,id)" href="javascript:;" title="启用"><i class="icon-ok bigger-120"></i></a>
+            <a th:case="1" style="text-decoration:none" class="btn btn-xs btn-success" onClick="member_stop(this,id)" href="javascript:;" title="停用"><i class="icon-ok bigger-120"></i></a>
+        <a title="编辑" th:href="@{/user/goods/}+${goods.id}" class="btn btn-xs btn-info" ><i class="icon-edit bigger-120"></i></a>
+        <a title="删除" href="javascript:;"  th:attr="del_uri=@{/user/goods/}+${goods.id}" onclick="member_del(this,'1')" class="btn btn-xs btn-warning deleteBtn" ><i class="icon-trash  bigger-120"></i></a>
+       </td>
+
+	  </tr>
+    </tbody>
+           <!--</div>-->
+    </table>
+             <form id="deleteEmpForm"  method="post">
+                 <input type="hidden" name="_method" value="delete"/>
+             </form>
+    </div>     
+  </div>
+ </div>
+</div>
+</body>
+</html>
+<script>
+    jQuery(function($) {
+        var oTable1 = $('#sample-table').dataTable( {
+            "aaSorting": [[ 1, "desc" ]],//默认第几个排序
+            "bStateSave": true,//状态保存
+            "aoColumnDefs": [
+                //{"bVisible": false, "aTargets": [ 3 ]} //控制列的隐藏显示
+                {"orderable":false,"aTargets":[0,2,3,4,5,8,9]}// 制定列不参与排序
+            ] } );
+
+
+        $('table th input:checkbox').on('click' , function(){
+            var that = this;
+            $(this).closest('table').find('tr > td:first-child input:checkbox')
+                .each(function(){
+                    this.checked = that.checked;
+                    $(this).closest('tr').toggleClass('selected');
+                });
+
+        });
+
+
+        $('[data-rel="tooltip"]').tooltip({placement: tooltip_placement});
+        //<![CDATA[
+        function tooltip_placement(context, source) {
+            var $source = $(source);
+            var $parent = $source.closest('table')
+            var off1 = $parent.offset();
+            var w1 = $parent.width();
+
+            var off2 = $source.offset();
+            var w2 = $source.width();
+
+            if( parseInt(off2.left) < parseInt(off1.left) + parseInt(w1 / 2) ) return 'right';
+            return 'left';
+        }
+        //]]>
+    });
+    laydate({
+        elem: '#start',
+        event: 'focus'
+    });
+    $(function() {
+        $("#products_style").fix({
+            float : 'left',
+            //minStatue : true,
+            skin : 'green',
+            durationTime :false,
+            spacingw:30,//设置隐藏时的距离
+            spacingh:260,//设置显示时间距
+        });
+    });
+</script>
+<script th:inline="javascript" type="text/javascript">
+    //初始化宽度、高度
+    $(".widget-box").height($(window).height()-215);
+    $(".table_menu_list").width($(window).width()-260);
+    $(".table_menu_list").height($(window).height()-215);
+    //当文档窗口发生改变时 触发
+    $(window).resize(function(){
+        $(".widget-box").height($(window).height()-215);
+        $(".table_menu_list").width($(window).width()-260);
+        $(".table_menu_list").height($(window).height()-215);
+    })
+
+    /*******树状图*******/
+    var setting = {
+        view: {
+            dblClickExpand: false,
+            showLine: false,
+            selectedMulti: false
+        },
+        data: {
+            simpleData: {
+                enable:true,
+                idKey: "id",
+                pIdKey: "pId",
+                rootPId: ""
+            }
+        },
+        callback: {
+            beforeClick: function(treeId, treeNode) {
+                var zTree = $.fn.zTree.getZTreeObj("tree");
+                if (treeNode.isParent) {
+                    zTree.expandNode(treeNode);
+                    return false;
+                } else {
+                    demoIframe.attr("src",treeNode.file + ".html");
+                    return true;
+                }
+            }
+        }
+    };
+
+    var zNodes =[
+        { id:1, pId:0, name:"商城分类列表", open:true},
+        // { id:2, pId:1, name:"蔬菜水果"},
+        // { id:6, pId:2, name:"蔬菜"},
+        // { id:7, pId:2, name:"苹果"},
+        // { id:8, pId:2, name:"大蒜"},
+        // { id:9, pId:2, name:"白菜"},
+        // { id:10, pId:2, name:"青菜"},
+        // { id:3, pId:1, name:"手机数码"},
+        // { id:11, pId:3, name:"手机 "},
+        // { id:12, pId:3, name:"照相机 "},
+        // { id:4, pId:1, name:"电脑配件"},
+        // { id:13, pId:4, name:"手机 "},
+        // { id:14, pId:4, name:"照相机 "},
+        // { id:5, pId:1, name:"服装鞋帽"},
+        // { id:15, pId:4, name:"手机 "},
+        // { id:16, pId:1, name:"照相机 "},
+    ];
+
+    //<![CDATA[
+    var allCategory = [[${allCategory}]];
+    for (var i = 0;i<allCategory.length;i++){
+        var arr={
+            "id":allCategory[i].id,
+            "pId":allCategory[i].parentId,
+            "name":allCategory[i].name
+        }
+        zNodes.push(arr);
+    }
+    //]]>
+
+    var code;
+    //<![CDATA[
+    function showCode(str) {
+        if (!code) code = $("#code");
+        code.empty();
+        code.append("<li>"+str+"</li>");
+    }
+    //]]>
+    $(document).ready(function(){
+        var t = $("#treeDemo");
+        t = $.fn.zTree.init(t, setting, zNodes);
+        demoIframe = $("#testIframe");
+        demoIframe.bind("load", loadReady);
+        var zTree = $.fn.zTree.getZTreeObj("tree");
+        zTree.selectNode(zTree.getNodeByParam("id",'11'));
+    });
+    /*产品-停用*/
+    //<![CDATA[
+    function member_stop(obj,id){
+        layer.confirm('确认要下架吗？',function(index){
+            $(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" class="btn btn-xs " onClick="member_start(this,id)" href="javascript:;" title="启用"><i class="icon-ok bigger-120"></i></a>');
+            $(obj).parents("tr").find(".td-status").html('<span class="label label-defaunt radius">下架</span>');
+            $(obj).remove();
+            layer.msg('已下架!',{icon: 5,time:1000});
+        });
+        $.ajax({
+            type: "post",
+            url: "/user/changeStatus",
+            data: {
+                status:'2',
+                id:$(obj).parents("tr").find(".goodsId").html()
+            },
+            // dataType: 'text',
+            // contentType: 'application/json;charset=UTF-8',
+            success: function (r) {
+
+            }
+        })
+    }
+    //]]>
+    /*产品-启用*/
+    //<![CDATA[
+    function member_start(obj,id){
+        layer.confirm('确认要上架吗？',function(index){
+            $(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" class="btn btn-xs btn-success" onClick="member_stop(this,id)" href="javascript:;" title="停用"><i class="icon-ok bigger-120"></i></a>');
+            $(obj).parents("tr").find(".td-status").html('<span class="label label-success radius">在售</span>');
+            $(obj).remove();
+            layer.msg('在售!',{icon: 6,time:1000});
+        });
+        $.ajax({
+            type: "post",
+            url: "/user/changeStatus",
+            data: {
+                status:'1',
+                id:$(obj).parents("tr").find(".goodsId").html()
+            },
+            // dataType: 'text',
+            // contentType: 'application/json;charset=UTF-8',
+            success: function (r) {
+
+            }
+        })
+    }
+    //]]>
+    /*产品-编辑*/
+    function member_edit(title,url,w,h){
+        layer_show(title,url,w,h);
+    }
+
+    /*产品-删除*/
+    function member_del(obj,id){
+        layer.confirm('确认要删除吗？',function(index){
+            $(obj).parents("tr").remove();
+            layer.msg('已删除!',{icon:1,time:1000});
+        });
+    }
+
+    $(".deleteBtn").click(function(){
+        //删除当前员工的
+        $("#deleteEmpForm").attr("action",$(this).attr("del_uri")).submit();
+    });
+    //面包屑返回值
+    var index = parent.layer.getFrameIndex(window.name);
+    parent.layer.iframeAuto(index);
+    //<![CDATA[
+    $('.Order_form').on('click', function(){
+        var cname = $(this).attr("title");
+        var chref = $(this).attr("href");
+        var cnames = parent.$('.Current_page').html();
+        var herf = parent.$("#iframe").attr("src");
+        parent.$('#parentIframe').html(cname);
+        parent.$('#iframe').attr("src",chref).ready();;
+        parent.$('#parentIframe').css("display","inline-block");
+        parent.$('.Current_page').attr({"name":herf,"href":"javascript:void(0)"}).css({"color":"#4c8fbd","cursor":"pointer"});
+        //parent.$('.Current_page').html("<a href='javascript:void(0)' name="+herf+" class='iframeurl'>" + cnames + "</a>");
+        parent.layer.close(index);
+
+    });
+    //]]>
+</script>
+
+
