@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>error:5xx</title>
+    <link th:href="@{/assets/css/bootstrap.min.css}" rel="stylesheet" />
+</head>
+<body>
+<h1>出错了请返回</h1>
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4" th:inline="text">
+    <h1 th:if="${msg!=null}">[[${msg}]]</h1>
+    <!--<h1>status:[[${status}]]</h1>-->
+    <!--<h2>timestamp:[[${timestamp}]]</h2>-->
+    <!--<h2>exception:[[${exception}]]</h2>-->
+    <!--<h2>message:[[${message}]]</h2>-->
+</main>
+
+</body>
+</html>
